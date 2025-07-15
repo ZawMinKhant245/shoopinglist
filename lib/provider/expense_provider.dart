@@ -15,7 +15,7 @@ class ExpenseProvider with ChangeNotifier{
   }
 
   void fetchAllExpense(){
-    expenses=box.values.toList();
+    expenses=box.values.toList().reversed.toList();
     print('expense list: ${expenses.length}');
     // box.clear();
     notifyListeners();

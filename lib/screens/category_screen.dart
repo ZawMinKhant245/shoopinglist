@@ -85,26 +85,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
      );
   }
 
-  Widget buildItemsList(){
-    return  ListView.builder(
-        itemCount:addNewCheckList.length,
-          shrinkWrap: true,
-          itemBuilder: (context,index){
-            return CheckboxListTile(
-              title: Text('NewCheckList'),
-                subtitle: Text('8'),
-                value: false,
-                onChanged: (val){
-                setState(() {
-                });
-                }
-            );
-
-          });
-
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

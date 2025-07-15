@@ -134,8 +134,20 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
                 Row(
                   children: [
                     Expanded(child:ElevatedButton(onPressed: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SettingsScreen(name: widget.name,)));
-                      // Navigator.of(context).pop();
+                      final provider=Provider.of<ExpenseProvider>(context,listen: false);
+                      final categoryExpense= provider.expenses
+                          .where((e)=>e.category == widget.name && e.isBought)
+                          .toList();
+                      if(categoryExpense.isEmpty){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Please select the items to print'))
+                        );
+                         Navigator.of(context).pop();
+                      }else{
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SettingsScreen(name: widget.name,)));
+                      }
+
+
                       // Navigator.of(context).pop();
 
                     }, child: Text('Voncher')), ),
@@ -197,7 +209,7 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 92, 117, 209),
-        title: Text('${widget.name} items list'),
+        title: Text('${widget.name} cost'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 25),

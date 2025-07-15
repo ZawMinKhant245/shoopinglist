@@ -21,21 +21,21 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   List<String>appBarTitle=['Total Expense','Analysis DashBoard '];
 
-   String totalAmount(int index){
-     final provider=Provider.of<ExpenseProvider>(context,listen: false);
-     final cProvider=Provider.of<CategoryProvider>(context,listen: false);
-
-     String name=cProvider.categories[index].name;
-
-     final categoryExpense= provider.expenses
-         .where((e)=>e.category == name)
-         .toList();
+   String totalAmount(){
      int amount =0;
-     for(int i=0;i<categoryExpense.length;i++){
-       amount += categoryExpense[i].amount!;
-     }
+     // Provider.of<ExpenseProvider>(context,listen: false).initBox();
+     final provider=Provider.of<ExpenseProvider>(context,listen: false);
+     final cProvider=Provider.of<CategoryProvider>(context,listen: true);
 
-     return '$amount';
+    for(int j=0; j<cProvider.categories.length;j++){
+      final categoryExpense= provider.expenses
+          .where((e)=>e.category == cProvider.categories[j].name && e.isBought)
+          .toList();
+      for(int i=0;i<categoryExpense.length;i++){
+        amount += categoryExpense[i].amount!;
+      }
+    }
+    return ' $amount';
    }
 
   Widget buildDrawerCard(){
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 25),
             child: Text(
-              '0 B',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18),
+              '${totalAmount()} B',style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18),
             ),
           )
         ],
