@@ -60,17 +60,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               DateTime today= DateTime.now();
               String printDate=DateFormat('yyyy-MM-dd').format(today);
+              String printTime=DateFormat('HH:mm:ss').format(today);
               return Column(
                 children:[
                   SizedBox(height: 10,),
                   Image.asset('assets/img_1.png',width: 80,),
+                  SizedBox(height: 10,),
                   Text('Voucher of ${widget.name}',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                  ListTile(
-                    dense: true,
-                    visualDensity: VisualDensity(vertical: -4),
-                    title:Text('Print Date'),
-                    trailing: Text(printDate,style: TextStyle(fontSize: 15),),
-                  ),
+                  SizedBox(height: 10,),
+                 Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 10),
+                   child: Row(
+                     children: [
+                       Expanded(flex: 2,
+                         child: Row(
+                           children: [
+                             Text('Date - '),
+                             Text(printDate),
+                           ],
+                         ),
+                       ),
+                       SizedBox(width: 20,),
+                       Expanded(
+
+                         child: Row(
+                           children: [
+                             Text('Time - '),
+                             Text(printTime),
+                           ],
+                         ),
+                       )
+
+
+                     ],
+                   ),
+                 ),
                   ListTile(
                     dense: true,
                     visualDensity: VisualDensity(vertical: -4),

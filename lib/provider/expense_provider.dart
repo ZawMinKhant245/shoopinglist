@@ -7,6 +7,13 @@ class ExpenseProvider with ChangeNotifier{
   late Box<Expense> box;
   List<Expense>expenses=[];
 
+  void saveToBox() {
+    final box = Hive.box<Expense>('expenses');
+    box.clear(); // Clear old data
+    for (var exp in expenses) {
+      box.add(exp);
+    }
+  }
   Future<void> initBox() async {
     box = await Hive.openBox<Expense>('expenses');
     // await Hive.box<Expense>('expenses').clear();
@@ -20,6 +27,8 @@ class ExpenseProvider with ChangeNotifier{
     // box.clear();
     notifyListeners();
   }
+  
+
 
   String getAllListAmount(){
     int total=0;
@@ -32,7 +41,7 @@ class ExpenseProvider with ChangeNotifier{
 
   void addCategory(Expense exp){
     box.add(exp);
-    expenses.add(exp);
+    expenses.insert(0, exp);
     notifyListeners();
   }
 

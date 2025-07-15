@@ -94,6 +94,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             if (snapShoot.connectionState == ConnectionState.waiting) {
               return Center(child:Text('No shopping list'));
             }else{
+              Provider.of<ExpenseProvider>(context,listen: false).initBox();
               return Consumer<CategoryProvider>(
                   builder:(context,provider,child){
                    return ListView.builder(
@@ -118,7 +119,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                  title:Text('List of ${provider.categories[index].name}'),
                                  subtitle: Text(DateFormat('yyyy-MM-dd').format(provider.categories[index].date!)),
                                  trailing: IconButton(onPressed: (){
+                                   final name=provider.categories[index].name;
                                    Provider.of<CategoryProvider>(context,listen: false).deleteItem(index);
+                                   final providerExpense=Provider.of<ExpenseProvider>(context,listen: false);
+                                   providerExpense.expenses.removeWhere((e)=>e.category == name);
+                                   providerExpense.deleteCategory(index);
                                  }, icon: Icon(Icons.delete)),
                                ),
                              ),

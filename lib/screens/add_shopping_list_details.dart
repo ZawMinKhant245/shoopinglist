@@ -23,7 +23,7 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
   void buildDialog({bool isUpdate=false,int? index,Expense? expense}){
     if(isUpdate){
       itemController.text=expense!.name;
-      amountController.text=expense.amount as String;
+      // amountController.text=expense.amount;
     }
     showDialog(context: context, builder: (context){
       return Dialog(
@@ -104,7 +104,7 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
                     amountController.clear();
                     Navigator.of(context).pop();
                   }
-                }, child: Text('save'))
+                }, child: Text(isUpdate?'Update':'save'))
               ],
             ),
           ),
@@ -125,15 +125,13 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
               children: [
                 Text('Alert Dialog',style: TextStyle(fontSize: 18,fontWeight:FontWeight.bold),),
                 SizedBox(height: 5,),
-                Text('Do you want to Delete or Update',style: TextStyle(fontSize: 15),),
+                Text('Click To Voucher',style: TextStyle(fontSize: 15),),
                 SizedBox(height: 5,),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                 ),
                 SizedBox(height: 5,),
-                Row(
-                  children: [
-                    Expanded(child:ElevatedButton(onPressed: (){
+                ElevatedButton(onPressed: (){
                       final provider=Provider.of<ExpenseProvider>(context,listen: false);
                       final categoryExpense= provider.expenses
                           .where((e)=>e.category == widget.name && e.isBought)
@@ -150,19 +148,7 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
 
                       // Navigator.of(context).pop();
 
-                    }, child: Text('Voncher')), ),
-                    Expanded(child:ElevatedButton(onPressed: (){
-                      Provider.of<ExpenseProvider>(context,listen: false).deleteCategory(index);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Item deleted'))
-                          );
-
-                      Navigator.of(context).pop();
-
-                    }, child: Text('Delete')), )
-                  ],
-                ),
-
+                    }, child: Text('Voucher')),
               ],
             ),
           ),
@@ -233,23 +219,26 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
           return Padding(
             padding: const EdgeInsets.only(top: 10,left: 10,right: 10),
             child: InkWell(
+              onTap: (){
+                buildDialog(isUpdate: true,index: index,expense: provider.expenses[index]);
+              },
               onLongPress: (){
                 buildAlertDialog(index: index);
               },
               child: Card(
                 color: exp.isBought
-                    ? Colors.green.shade100
+                    ? Color.fromARGB(255, 216, 206, 206)
                     : Color.fromARGB(255, 216, 206, 206),
-                child: CheckboxListTile(
-                  subtitle: Text('${exp.amount} B',
-                    style: TextStyle(
-                      decoration: exp.isBought
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      fontWeight:
-                      exp.isBought ? FontWeight.w500 : FontWeight.normal,
-                      color: exp.isBought ? Colors.grey : Colors.black,
-                    ),),
+                child:  ListTile(
+                  leading: Checkbox(
+                    value: exp.isBought,
+                    onChanged: (val) {
+                      setState(() {
+                        exp.isBought = val!;
+                        exp.save();
+                      });
+                    },
+                  ),
                   title: Text(
                     exp.name,
                     style: TextStyle(
@@ -261,13 +250,24 @@ class _AddShoppingListDetailsState extends State<AddShoppingListDetails> {
                       color:exp.isBought ? Colors.grey : Colors.black,
                     ),
                   ),
-                  value:exp.isBought,
-                  onChanged: (val) {
-                    setState(() {
-                      exp.isBought = val!;
-                      exp.save();
-                    });
-                  },
+                  subtitle: Text(
+                    '${exp.amount} B',
+                    style: TextStyle(
+                      decoration: exp.isBought
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                      fontWeight:
+                      exp.isBought ? FontWeight.w500 : FontWeight.bold,
+                      color:exp.isBought ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                  trailing: IconButton(onPressed: (){
+                    Provider.of<ExpenseProvider>(context,listen: false).deleteCategory(index);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Item deleted'))
+                    );
+                  }, icon: Icon(Icons.delete)),
+                  
                 ),
               ),
             ),
