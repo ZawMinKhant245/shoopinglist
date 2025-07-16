@@ -91,7 +91,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       body:FutureBuilder(
           future: Provider.of<CategoryProvider>(context,listen: false).initBox(),
           builder: (context,snapShoot){
-            if (snapShoot.connectionState == ConnectionState.waiting) {
+            if (snapShoot.connectionState == ConnectionState.waiting || Provider.of<CategoryProvider>(context,listen: false).categories.isEmpty ) {
               return Center(child:Text('No shopping list'));
             }else{
               Provider.of<ExpenseProvider>(context,listen: false).initBox();

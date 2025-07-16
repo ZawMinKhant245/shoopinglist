@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: buildDrawerCard(),
+      // drawer: buildDrawerCard(),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 92, 117, 209),
         title: Text(appBarTitle[currentIndex],style: TextStyle(fontWeight: FontWeight.bold),),

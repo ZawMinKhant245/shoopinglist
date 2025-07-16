@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shoopinglist/model/expense.dart';
 import 'package:shoopinglist/provider/category_provider.dart';
 import 'package:shoopinglist/provider/expense_provider.dart';
-
+import 'package:pdf/pdf.dart';
+import 'package:printing/printing.dart';
+import 'package:pdf/widgets.dart' as pw;
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({required this.name,super.key});
 
@@ -40,6 +43,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // }
 
 
+  Future<void>_printVoucher(List<Expense>expense)async{
+    final pdf=pw.Document();
+    final todayDate=DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final todayTime=DateFormat('HH:mm:ss').format(DateTime.now());
+    final iamgebyte= await rootBundle.load('assets/img_2.png');
+    final image=pw.MemoryImage(iamgebyte.buffer.asUint8List());
+
+    pdf.addPage(
+      pw.Page(build: (pw.Context context){
+        return pw.Column(
+          children:[
+            pw.Text('Voucher ${widget.name}',style: pw.TextStyle(
+                fontSize: 20, fontWeight: pw.FontWeight.bold
+            )),
+            pw.SizedBox(height: 20),
+            pw.Row(
+              children: [
+                pw.Text('Print Date: $todayDate'),
+                pw.SizedBox(width: 20),
+                pw.Text('Time: $todayTime'),
+              ]
+            ),
+            pw.Divider(),
+            
+            pw.ListView.builder(
+                itemBuilder:(context,index){
+                  final item=expense[index];
+                  return pw.Container(
+                    padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                    decoration: const pw.BoxDecoration(
+                      border: pw.Border(
+                        bottom: pw.BorderSide(color: PdfColors.grey, width: 0.5),
+                      ),
+                    ),
+                    child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text(item.name ?? 'Unnamed'),
+                        pw.Text('${item.amount ?? 0} B'),
+                      ],
+                    ),
+                  );
+                },
+                itemCount: expense.length),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('Total:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                pw.Text(
+                  '${expense.fold<int>(0, (sum, item) => sum + (item.amount ?? 0))} B',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 20,),
+            pw.Image(image,width: 80),
+            pw.SizedBox(height: 10,),
+            pw.Text('Thank You',style: pw.TextStyle(fontWeight: pw.FontWeight.bold,fontSize: 24)),
+          ]
+        );
+      })
+    );
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -48,7 +116,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: Color.fromARGB(255, 92, 117, 209),
         title: Text('Voucher'),
         actions: [
-          TextButton(onPressed: (){}, child: Text('Print',style: TextStyle(color: Colors.white),))
+          TextButton(onPressed: (){
+            final provider=Provider.of<ExpenseProvider>(context,listen: false);
+            final categoryExpense=provider.expenses
+            .where((e)=> e.category == widget.name && e.isBought).toList();
+            _printVoucher(categoryExpense);
+          }, child: Text('Print',style: TextStyle(color: Colors.white),))
         ],
       ),
       body: FutureBuilder(
