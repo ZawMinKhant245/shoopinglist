@@ -47,15 +47,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final pdf=pw.Document();
     final todayDate=DateFormat('yyyy-MM-dd').format(DateTime.now());
     final todayTime=DateFormat('HH:mm:ss').format(DateTime.now());
+
     final iamgebyte= await rootBundle.load('assets/img_2.png');
     final image=pw.MemoryImage(iamgebyte.buffer.asUint8List());
+
+    final fontData = await rootBundle.load('assets/fonts/NotoSansMyanmar-Regular.ttf');
+    final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
     pdf.addPage(
       pw.Page(build: (pw.Context context){
         return pw.Column(
           children:[
-            pw.Text('Voucher ${widget.name}',style: pw.TextStyle(
-                fontSize: 20, fontWeight: pw.FontWeight.bold
+            pw.Text('Voucher',style: pw.TextStyle(
+                fontSize: 20, fontWeight: pw.FontWeight.bold,
             )),
             pw.SizedBox(height: 20),
             pw.Row(
@@ -80,18 +84,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text(item.name ?? 'Unnamed'),
+                        pw.Text(item.name ?? 'Unnamed',style: pw.TextStyle(font: ttf)),
                         pw.Text('${item.amount ?? 0} B'),
                       ],
                     ),
                   );
                 },
-                itemCount: expense.length),
+                itemCount: expense.length
+            ),
             pw.Divider(),
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Text('Total:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                pw.Text('Total:'),
                 pw.Text(
                   '${expense.fold<int>(0, (sum, item) => sum + (item.amount ?? 0))} B',
                   style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
