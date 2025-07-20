@@ -91,7 +91,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       body:FutureBuilder(
           future: Provider.of<CategoryProvider>(context,listen: false).initBox(),
           builder: (context,snapShoot){
-            if (snapShoot.connectionState == ConnectionState.waiting || Provider.of<CategoryProvider>(context,listen: false).categories.isEmpty ) {
+            if (snapShoot.connectionState == ConnectionState.waiting) {
               return Center(child:Text('No shopping list'));
             }else{
               Provider.of<ExpenseProvider>(context,listen: false).initBox();
@@ -107,8 +107,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                              onLongPress: (){
 
                                buildDialog(isUpdate: true,index: index,category: provider.categories[index]);
-
-                             },
+                               },
                              onTap: (){
                                String name=provider.categories[index].name;
                                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddShoppingListDetails(name: name,)));

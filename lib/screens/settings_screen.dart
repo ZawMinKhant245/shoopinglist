@@ -84,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text(item.name ?? 'Unnamed',style: pw.TextStyle(font: ttf)),
+                        pw.Text(item.name ?? 'Unnamed',),
                         pw.Text('${item.amount ?? 0} B'),
                       ],
                     ),
